@@ -270,3 +270,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardColor: 0
   root: {fileID: 5505824059226792132}
+  meshRenderer: {fileID: 3750680361204389039}

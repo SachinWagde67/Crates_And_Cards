@@ -1,11 +1,14 @@
 using UnityEngine;
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GeneratorCrate : MonoBehaviour, ITappable {
+public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
 
     [Header("Generator Settings")]
     [SerializeField] private CardColor cardToGenerateColor;
+    [SerializeField] private CardColor crateToGenerateColor;
+    [SerializeField] private MeshRenderer crateRenderer;
 
     [Header("Spawn Points")]
     [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
@@ -15,32 +18,75 @@ public class GeneratorCrate : MonoBehaviour, ITappable {
     [SerializeField] private float releaseDelay = 0.15f;
 
     private List<Card> storedCards = new List<Card>();
+    private bool isTapped;
+    private bool isSpawningCards;
     private bool isReleasing;
     private Transform jumpTargetPoint;
     private int totalSpawnPoints;
+    private MaterialPropertyBlock propertyBlock;
+    private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
 
-    private void Start() {
+    private void Awake() {
+
+        propertyBlock = new MaterialPropertyBlock();
+    }
+
+    public void InitializeCrate(CrateConfig config) {
+
+        isTapped = false;
+
+        cardToGenerateColor = config.cardToGenerateColor;
+        crateToGenerateColor = config.crateToGenerateColor;
+
+        ApplyColor(crateToGenerateColor);
+
+        transform.localScale = Vector3.zero;
+        transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+
+        StartCoroutine(SpawnCardsCoroutine());
+    }
+
+    public void OnSpawned() {
 
         jumpTargetPoint = ConveyorManager.Instance.JumpTargetPoint;
 
         if(spawnPoints != null) {
             totalSpawnPoints = spawnPoints.Count;
         }
+    }
 
-        StartCoroutine(PreloadCards());
+    public void OnDespawned() {
+
+        StopAllCoroutines();
+        storedCards.Clear();
+    }
+
+    public void ApplyColor(CardColor colorType) {
+
+        Color color = ColorManager.Instance.GetColor(colorType);
+
+        crateRenderer.GetPropertyBlock(propertyBlock);
+        propertyBlock.SetColor(BaseColor, color);
+        crateRenderer.SetPropertyBlock(propertyBlock);
     }
 
     public void OnTap() {
 
-        if(isReleasing || storedCards.Count == 0) {
+        if(isSpawningCards || isReleasing || isTapped) {
             return;
         }
 
+        isTapped = true;
+
         GameEvents.OnGeneratorTapped?.Invoke(this);
-        StartCoroutine(ReleaseCardsRoutine());
+        StartCoroutine(ReleaseCardsCoroutine());
     }
 
-    private IEnumerator PreloadCards() {
+    private IEnumerator SpawnCardsCoroutine() {
+
+        isSpawningCards = true;
+
+        storedCards.Clear();
 
         for(int i = 0; i < totalSpawnPoints; i++) {
 
@@ -57,9 +103,11 @@ public class GeneratorCrate : MonoBehaviour, ITappable {
 
             yield return new WaitForSeconds(spawnDelay);
         }
+
+        isSpawningCards = false;
     }
 
-    private IEnumerator ReleaseCardsRoutine() {
+    private IEnumerator ReleaseCardsCoroutine() {
 
         isReleasing = true;
 
@@ -78,5 +126,16 @@ public class GeneratorCrate : MonoBehaviour, ITappable {
         }
 
         isReleasing = false;
+
+        if(storedCards.Count == 0) {
+            GameEvents.OnGeneratorEmpty?.Invoke(this);
+        }
+    }
+
+    public IEnumerator ScaleDownAndReturn() {
+
+        yield return transform.DOScale(0f, 0.3f).WaitForCompletion();
+
+        PoolManager.Instance.ReturnGenerator(this);
     }
 }

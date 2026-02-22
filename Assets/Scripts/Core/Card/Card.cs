@@ -5,6 +5,7 @@ public class Card : MonoBehaviour, IPool {
 
     [SerializeField] private CardColor cardColor;
     [SerializeField] private Transform root;
+    [SerializeField] private MeshRenderer meshRenderer;
 
     private CardStateMachine stateMachine;
 
@@ -13,15 +14,17 @@ public class Card : MonoBehaviour, IPool {
     private ICardState movingState;
     private ICardState collectedState;
     private Vector3 originalScale;
+    private MaterialPropertyBlock propertyBlock;
+    private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
 
     public CardColor Color => cardColor;
 
     private void Awake() {
 
         originalScale = root.localScale;
+        propertyBlock = new MaterialPropertyBlock();
 
         stateMachine = new CardStateMachine();
-
         idleState = new CardIdleState(this);
         jumpingState = new CardJumpingState(this);
         movingState = new CardMovingState(this);
@@ -29,7 +32,18 @@ public class Card : MonoBehaviour, IPool {
     }
 
     public void Initialize(CardColor color) {
+
         cardColor = color;
+        ApplyColor(color);
+    }
+
+    public void ApplyColor(CardColor colorType) {
+
+        Color color = ColorManager.Instance.GetColor(colorType);
+
+        meshRenderer.GetPropertyBlock(propertyBlock);
+        propertyBlock.SetColor(BaseColor, color);
+        meshRenderer.SetPropertyBlock(propertyBlock);
     }
 
     public void OnSpawned() {

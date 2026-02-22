@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4280d495e2871154fb9c8509db0a944c, type: 2}
+  - {fileID: 2100000, guid: 7c7bb6e3616992549bef95577a0010b4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -349,7 +349,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eb5bdca73a9241449be84eca28882b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GeneratorCrate
-  cardToGenerateColor: 1
+  cardToGenerateColor: 0
+  generatorCrateColor: 3
+  crateRenderer: {fileID: 8745588740128170451}
   spawnPoints:
   - {fileID: 6206100510399979526}
   - {fileID: 8798148849234755670}
