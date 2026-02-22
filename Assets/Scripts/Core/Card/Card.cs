@@ -4,7 +4,7 @@ using DG.Tweening;
 public class Card : MonoBehaviour, IPool {
 
     [SerializeField] private CardColor cardColor;
-    [SerializeField] private Transform cardTransform;
+    [SerializeField] private Transform root;
 
     private CardStateMachine stateMachine;
 
@@ -12,10 +12,13 @@ public class Card : MonoBehaviour, IPool {
     private ICardState jumpingState;
     private ICardState movingState;
     private ICardState collectedState;
+    private Vector3 originalScale;
 
     public CardColor Color => cardColor;
 
     private void Awake() {
+
+        originalScale = root.localScale;
 
         stateMachine = new CardStateMachine();
 
@@ -25,10 +28,15 @@ public class Card : MonoBehaviour, IPool {
         collectedState = new CardCollectedState(this);
     }
 
+    public void Initialize(CardColor color) {
+        cardColor = color;
+    }
+
     public void OnSpawned() {
 
-        base.transform.localScale = Vector3.zero;
-        cardTransform.DOScale(1f, 0.25f).From(0f);
+        root.localScale = Vector3.zero;
+
+        root.DOScale(originalScale, 0.25f).SetEase(Ease.OutBack);
 
         GameEvents.OnCardSpawned?.Invoke(this);
 
@@ -37,7 +45,7 @@ public class Card : MonoBehaviour, IPool {
 
     public void OnDespawned() {
 
-        DOTween.Kill(cardTransform);
+        DOTween.Kill(transform);
         ChangeToIdle();
     }
 
@@ -51,9 +59,9 @@ public class Card : MonoBehaviour, IPool {
         GameEvents.OnCardEnteredConveyor?.Invoke(this);
     }
 
-    public void ChangeToJumping(Vector3 targetPosition) {
+    public void ChangeToJumping(Vector3 targetPosition, System.Action onComplete = null) {
 
-        ((CardJumpingState)jumpingState).SetTarget(targetPosition);
+        ((CardJumpingState)jumpingState).SetTarget(targetPosition, onComplete);
         stateMachine.ChangeState(jumpingState);
     }
 

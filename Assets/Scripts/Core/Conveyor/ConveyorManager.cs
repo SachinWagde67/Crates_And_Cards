@@ -6,7 +6,11 @@ public class ConveyorManager : MonoBehaviour {
     public static ConveyorManager Instance { get; private set; }
 
     [SerializeField] private SplineComputer conveyorSpline;
-    [SerializeField] private float conveyorSpeed = 4f;
+    [SerializeField] private float conveyorSpeed = 1f;
+    [SerializeField] private Transform jumpTargetPoint;
+    [SerializeField] private float verticalOffset = 0.3f;
+
+    public Transform JumpTargetPoint => jumpTargetPoint;
 
     private void Awake() {
 
@@ -37,6 +41,7 @@ public class ConveyorManager : MonoBehaviour {
         follower.spline = conveyorSpline;
         follower.followSpeed = conveyorSpeed;
         follower.wrapMode = SplineFollower.Wrap.Loop;
+        follower.motion.offset = new Vector2(0f, verticalOffset);
         follower.autoStartPosition = true;
 
         follower.Restart();
