@@ -6,14 +6,22 @@ public class PoolManager : MonoBehaviour {
 
     [Header("Pool Config")]
     [SerializeField] private Card cardPrefab;
+    [SerializeField] private Transform cardPoolParent;
     [SerializeField] private int cardInitialSize = 30;
 
     [Header("Generator Config")]
     [SerializeField] private GeneratorCrate generatorPrefab;
+    [SerializeField] private Transform generatorPoolParent;
     [SerializeField] private int generatorInitialSize = 5;
+
+    [Header("Catcher Config")]
+    [SerializeField] private CatcherCrate catcherPrefab;
+    [SerializeField] private Transform catcherPoolParent;
+    [SerializeField] private int catcherInitialSize = 5;
 
     private ObjectPool<Card> cardPool;
     private ObjectPool<GeneratorCrate> generatorPool;
+    private ObjectPool<CatcherCrate> catcherPool;
 
     private void Awake() {
 
@@ -29,8 +37,9 @@ public class PoolManager : MonoBehaviour {
 
     private void InitializePools() {
 
-        cardPool = new ObjectPool<Card>(cardPrefab, cardInitialSize, transform);
-        generatorPool = new ObjectPool<GeneratorCrate>(generatorPrefab, generatorInitialSize, transform);
+        cardPool = new ObjectPool<Card>(cardPrefab, cardInitialSize, cardPoolParent);
+        generatorPool = new ObjectPool<GeneratorCrate>(generatorPrefab, generatorInitialSize, generatorPoolParent);
+        catcherPool = new ObjectPool<CatcherCrate>(catcherPrefab, catcherInitialSize, catcherPoolParent);
     }
 
     public Card GetCard() {
@@ -47,5 +56,13 @@ public class PoolManager : MonoBehaviour {
 
     public void ReturnGenerator(GeneratorCrate generator) {
         generatorPool.ReturnToPool(generator);
+    }
+
+    public CatcherCrate GetCatcher() {
+        return catcherPool.Get();
+    }
+
+    public void ReturnCatcher(CatcherCrate catcher) {
+        catcherPool.ReturnToPool(catcher);
     }
 }

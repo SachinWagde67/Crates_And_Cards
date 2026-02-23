@@ -9,6 +9,9 @@ public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
     [SerializeField] private CardColor cardToGenerateColor;
     [SerializeField] private CardColor crateToGenerateColor;
     [SerializeField] private MeshRenderer crateRenderer;
+    [SerializeField] private Collider crateCollider;
+    [SerializeField] private float backwardOffsetZ = -1f;
+    [SerializeField] private float forwardMoveDuration = 0.4f;
 
     [Header("Spawn Points")]
     [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
@@ -17,12 +20,12 @@ public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
     [SerializeField] private float spawnDelay = 0.15f;
     [SerializeField] private float releaseDelay = 0.15f;
 
-    private List<Card> storedCards = new List<Card>();
     private bool isTapped;
     private bool isSpawningCards;
     private bool isReleasing;
     private Transform jumpTargetPoint;
     private int totalSpawnPoints;
+    private List<Card> storedCards = new List<Card>();
     private MaterialPropertyBlock propertyBlock;
     private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
 
@@ -40,13 +43,26 @@ public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
 
         ApplyColor(crateToGenerateColor);
 
-        transform.localScale = Vector3.zero;
-        transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+        Vector3 finalLocalPos = Vector3.zero;
+        Vector3 startLocalPos = new Vector3(0f, 0f, backwardOffsetZ);
 
-        StartCoroutine(SpawnCardsCoroutine());
+        transform.localPosition = startLocalPos;
+        crateCollider.enabled = false;
+
+        Sequence spawnSequence = DOTween.Sequence();
+
+        spawnSequence.Append(transform.DOLocalMove(finalLocalPos, forwardMoveDuration).SetEase(Ease.OutBack));
+
+        spawnSequence.AppendCallback(() => {
+            StartCoroutine(SpawnCardsCoroutine());
+        });
     }
 
     public void OnSpawned() {
+
+        transform.localScale = Vector3.one;
+        transform.localRotation = Quaternion.identity;
+        transform.localPosition = Vector3.zero;
 
         jumpTargetPoint = ConveyorManager.Instance.JumpTargetPoint;
 
@@ -59,6 +75,7 @@ public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
 
         StopAllCoroutines();
         storedCards.Clear();
+        DOTween.Kill(transform);
     }
 
     public void ApplyColor(CardColor colorType) {
@@ -105,6 +122,7 @@ public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
         }
 
         isSpawningCards = false;
+        crateCollider.enabled = true;
     }
 
     private IEnumerator ReleaseCardsCoroutine() {
@@ -113,12 +131,12 @@ public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
 
         while(storedCards.Count > 0) {
 
-            Card card = storedCards[storedCards.Count - 1];
-            storedCards.RemoveAt(storedCards.Count - 1);
+            Card card = storedCards[0];
+            storedCards.RemoveAt(0);
 
             card.transform.SetParent(null);
 
-            card.ChangeToJumping(jumpTargetPoint.position, () => {
+            card.ChangeToJumping(jumpTargetPoint.position, jumpTargetPoint.rotation, () => {
                 card.ChangeToMoving();
             });
 
@@ -127,9 +145,7 @@ public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
 
         isReleasing = false;
 
-        if(storedCards.Count == 0) {
-            GameEvents.OnGeneratorEmpty?.Invoke(this);
-        }
+        GameEvents.OnGeneratorEmpty?.Invoke(this);
     }
 
     public IEnumerator ScaleDownAndReturn() {

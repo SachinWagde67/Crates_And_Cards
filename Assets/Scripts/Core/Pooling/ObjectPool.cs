@@ -44,6 +44,7 @@ public class ObjectPool<T> where T : Component, IPool {
     public void ReturnToPool(T obj) {
 
         obj.OnDespawned();
+        obj.transform.SetParent(parent);
         obj.gameObject.SetActive(false);
         poolQueue.Enqueue(obj);
     }

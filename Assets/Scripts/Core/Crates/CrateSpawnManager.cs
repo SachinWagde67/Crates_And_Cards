@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public struct CrateConfig {
@@ -11,8 +12,8 @@ public struct CrateConfig {
 public class CrateSpawnManager : MonoBehaviour {
 
     [Header("Crate Settings")]
-    [SerializeField] private CrateConfig[] crateConfigs;
-    [SerializeField] private Transform[] spawnLocations;
+    [SerializeField] private List<CrateConfig> crateConfigs = new List<CrateConfig>();
+    [SerializeField] private List<Transform> spawnLocations = new List<Transform>();
     [SerializeField] private float respawnDelay = 1.0f;
 
     private void OnEnable() {
@@ -47,7 +48,7 @@ public class CrateSpawnManager : MonoBehaviour {
 
     private void SpawnRandomCrate(Transform parent) {
 
-        int randomIndex = Random.Range(0, crateConfigs.Length);
+        int randomIndex = Random.Range(0, crateConfigs.Count);
 
         CrateConfig config = crateConfigs[randomIndex];
 

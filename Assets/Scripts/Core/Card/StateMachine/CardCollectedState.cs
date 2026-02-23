@@ -1,4 +1,4 @@
-using DG.Tweening;
+using UnityEngine;
 
 public class CardCollectedState : ICardState {
 
@@ -11,13 +11,7 @@ public class CardCollectedState : ICardState {
     public void Enter() {
 
         GameEvents.OnCardCollected?.Invoke(card);
-
-        card.transform.DOScale(0f, 0.2f).OnComplete(() => {
-            PoolManager.Instance.ReturnCard(card);
-        });
     }
 
-    public void Exit() {
-
-    }
+    public void Exit() { }
 }

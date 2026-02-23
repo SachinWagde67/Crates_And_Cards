@@ -12,9 +12,9 @@ public class ColorManager : MonoBehaviour {
         public Color color;
     }
 
-    [SerializeField] private ColorData[] colorMappings;
+    [SerializeField] private List<ColorData> colorMappings = new List<ColorData>();
 
-    private Dictionary<CardColor, Color> colorMap;
+    private Dictionary<CardColor, Color> colorMap = new Dictionary<CardColor, Color>();
 
     private void Awake() {
 
@@ -28,8 +28,6 @@ public class ColorManager : MonoBehaviour {
     }
 
     private void Initialize() {
-
-        colorMap = new Dictionary<CardColor, Color>();
 
         foreach(ColorData data in colorMappings) {
 
