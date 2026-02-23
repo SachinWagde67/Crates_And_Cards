@@ -53,6 +53,8 @@ public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
 
         spawnSequence.Append(transform.DOLocalMove(finalLocalPos, forwardMoveDuration).SetEase(Ease.OutBack));
 
+        SoundManager.Instance.PlayOneShot(SoundType.GeneratorSpawn);
+
         spawnSequence.AppendCallback(() => {
             StartCoroutine(SpawnCardsCoroutine());
         });
@@ -96,6 +98,7 @@ public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
         isTapped = true;
 
         GameEvents.OnGeneratorTapped?.Invoke(this);
+        SoundManager.Instance.PlayOneShot(SoundType.GeneratorTap);
         StartCoroutine(ReleaseCardsCoroutine());
     }
 
@@ -146,6 +149,7 @@ public class GeneratorCrate : MonoBehaviour, ITappable, IPool {
         isReleasing = false;
 
         GameEvents.OnGeneratorEmpty?.Invoke(this);
+        SoundManager.Instance.PlayOneShot(SoundType.GeneratorEmpty);
     }
 
     public IEnumerator ScaleDownAndReturn() {

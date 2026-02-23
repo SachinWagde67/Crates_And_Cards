@@ -32,23 +32,19 @@ public class CatcherSlot : MonoBehaviour {
     private void OnTriggerEnter(Collider other) {
 
         if(!triggerCollider.enabled) {
-            Debug.Log($"Trigger Not enabled");
             return;
         }
 
         if(activeCrate == null) {
-            Debug.Log($"Active crate is null");
             return;
         }
 
         Card card = other.GetComponentInParent<Card>();
 
         if(card == null) {
-            Debug.Log($"Card is null");
             return;
         }
 
-        Debug.Log($"TryCatchCard");
         activeCrate.TryCatchCard(card);
     }
 

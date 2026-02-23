@@ -19,9 +19,15 @@ public class PoolManager : MonoBehaviour {
     [SerializeField] private Transform catcherPoolParent;
     [SerializeField] private int catcherInitialSize = 5;
 
+    [Header("Audio Source Config")]
+    [SerializeField] private AudioSourcePool audioPrefab;
+    [SerializeField] private Transform audioParent;
+    [SerializeField] private int audioInitialSize = 10;
+
     private ObjectPool<Card> cardPool;
     private ObjectPool<GeneratorCrate> generatorPool;
     private ObjectPool<CatcherCrate> catcherPool;
+    private ObjectPool<AudioSourcePool> audioPool;
 
     private void Awake() {
 
@@ -40,6 +46,7 @@ public class PoolManager : MonoBehaviour {
         cardPool = new ObjectPool<Card>(cardPrefab, cardInitialSize, cardPoolParent);
         generatorPool = new ObjectPool<GeneratorCrate>(generatorPrefab, generatorInitialSize, generatorPoolParent);
         catcherPool = new ObjectPool<CatcherCrate>(catcherPrefab, catcherInitialSize, catcherPoolParent);
+        audioPool = new ObjectPool<AudioSourcePool>(audioPrefab, audioInitialSize, audioParent);
     }
 
     public Card GetCard() {
@@ -64,5 +71,13 @@ public class PoolManager : MonoBehaviour {
 
     public void ReturnCatcher(CatcherCrate catcher) {
         catcherPool.ReturnToPool(catcher);
+    }
+
+    public AudioSourcePool GetAudio() {
+        return audioPool.Get();
+    }
+
+    public void ReturnAudio(AudioSourcePool audio) {
+        audioPool.ReturnToPool(audio);
     }
 }

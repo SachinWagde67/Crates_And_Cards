@@ -70,17 +70,14 @@ public class CatcherCrate : MonoBehaviour, IPool {
     public void TryCatchCard(Card card) {
 
         if(isFull || isDespawning) {
-            Debug.Log($"is full or is despawning");
             return;
         }
 
         if(card.Color != targetColor) {
-            Debug.Log($"target color not match");
             return;
         }
 
         if(currentCatchIndex >= catchPoints.Count) {
-            Debug.Log($"catch index greater");
             return;
         }
 
@@ -120,6 +117,8 @@ public class CatcherCrate : MonoBehaviour, IPool {
         sequence.Append(root.DOScale(0f, 0.2f));
 
         sequence.OnComplete(() => {
+
+            SoundManager.Instance.PlayOneShot(SoundType.CatcherFull);
 
             foreach(Transform catchPoint in catchPoints) {
 

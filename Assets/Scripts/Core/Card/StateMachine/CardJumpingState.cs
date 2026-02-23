@@ -23,6 +23,8 @@ public class CardJumpingState : ICardState {
 
     public void Enter() {
 
+        SoundManager.Instance.PlayOneShot(SoundType.CardJump);
+
         Sequence seq = DOTween.Sequence();
 
         seq.Join(card.transform.DOJump(targetPosition, 0.5f, 1, duration).SetEase(Ease.OutQuad));
