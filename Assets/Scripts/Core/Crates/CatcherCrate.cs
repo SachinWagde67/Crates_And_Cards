@@ -14,7 +14,7 @@ public class CatcherCrate : MonoBehaviour, IPool {
     [SerializeField] private CardColor targetColor;
 
     [Header("Catch Points")]
-    [SerializeField] private List<Transform> catchPoints;
+    [SerializeField] private List<Transform> catchPoints = new List<Transform>();
 
     private int currentCatchIndex = 0;
     private bool isFull = false;

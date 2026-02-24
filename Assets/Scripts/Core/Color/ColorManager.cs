@@ -1,16 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[System.Serializable]
+public struct ColorData {
+
+    public CardColor colorType;
+    public Color color;
+}
+
 public class ColorManager : MonoBehaviour {
 
     public static ColorManager Instance { get; private set; }
-
-    [System.Serializable]
-    public struct ColorData {
-
-        public CardColor colorType;
-        public Color color;
-    }
 
     [SerializeField] private List<ColorData> colorMappings = new List<ColorData>();
 

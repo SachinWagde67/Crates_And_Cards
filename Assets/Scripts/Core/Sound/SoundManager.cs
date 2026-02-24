@@ -1,17 +1,17 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[System.Serializable]
+public class SoundData {
+
+    public SoundType soundType;
+    public AudioClip clip;
+    [Range(0f, 1f)] public float volume = 1f;
+}
+
 public class SoundManager : MonoBehaviour {
 
     public static SoundManager Instance { get; private set; }
-
-    [System.Serializable]
-    public class SoundData {
-
-        public SoundType soundType;
-        public AudioClip clip;
-        [Range(0f, 1f)] public float volume = 1f;
-    }
 
     [SerializeField] private List<SoundData> sounds = new List<SoundData>();
 
@@ -30,8 +30,6 @@ public class SoundManager : MonoBehaviour {
     }
 
     private void InitializeDictionary() {
-
-        soundDictionary = new Dictionary<SoundType, SoundData>();
 
         foreach(SoundData data in sounds) {
 

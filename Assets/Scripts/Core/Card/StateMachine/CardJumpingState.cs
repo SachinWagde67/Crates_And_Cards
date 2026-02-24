@@ -9,6 +9,7 @@ public class CardJumpingState : ICardState {
     private Quaternion targetRotation;
     private Action onCompleteAction;
     private float duration = 0.4f;
+    private float jumpPower = 0.5f;
 
     public CardJumpingState(Card card) {
         this.card = card;
@@ -27,7 +28,7 @@ public class CardJumpingState : ICardState {
 
         Sequence seq = DOTween.Sequence();
 
-        seq.Join(card.transform.DOJump(targetPosition, 0.5f, 1, duration).SetEase(Ease.OutQuad));
+        seq.Join(card.transform.DOJump(targetPosition, jumpPower, 1, duration).SetEase(Ease.OutQuad));
 
         seq.Join(card.transform.DORotateQuaternion(targetRotation, duration));
 
