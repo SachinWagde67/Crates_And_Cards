@@ -98,6 +98,11 @@ A short recording demonstrating:
 
 👉 Click the thumbnail below to watch
 
-[![Gameplay Demo](Gameplay/1.png)]([https://drive.google.com/your-link](https://drive.google.com/file/d/1YzId83jIvuAFK2U7oLQvaZMopr57psQa/view?usp=drive_link))
-![Screenshot 1](Gameplay/1.png)
-![Screenshot 2](Gameplay/2.png)
+[![Watch Gameplay](Assets/Gameplay/1.png)](https://drive.google.com/file/d/1YzId83jIvuAFK2U7oLQvaZMopr57psQa/view?usp=drive_link)
+
+---
+
+## 🖼️ Screenshots
+
+![Screenshot 1](Assets/Gameplay/1.png)
+![Screenshot 2](Assets/Gameplay/2.png)
