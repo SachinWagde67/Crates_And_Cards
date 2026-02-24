@@ -87,3 +87,17 @@ The project is structured with a separation of responsibilities and scalable sys
 - Unity 6.3 LTS (URP)
 
 ---
+
+## 🎥 Gameplay Recording
+
+A short recording demonstrating:
+- Tap interaction
+- Conveyor movement
+- Color matching logic
+- Crate completion animation
+
+👉 Click the thumbnail below to watch
+
+[![Gameplay Demo](Gameplay/1.png)]([https://drive.google.com/your-link](https://drive.google.com/file/d/1YzId83jIvuAFK2U7oLQvaZMopr57psQa/view?usp=drive_link))
+![Screenshot 1](Gameplay/1.png)
+![Screenshot 2](Gameplay/2.png)
