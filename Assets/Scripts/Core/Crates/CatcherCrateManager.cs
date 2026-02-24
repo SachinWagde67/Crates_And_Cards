@@ -10,6 +10,8 @@ public class CatcherCrateManager : MonoBehaviour {
     [SerializeField] private List<CatcherSlot> slots = new List<CatcherSlot>();
     [SerializeField] private List<CardColor> possibleColors = new List<CardColor>();
 
+    private List<CardColor> colorsList = new List<CardColor>();
+
     private void Awake() {
 
         if(Instance != this && Instance != null) {
@@ -22,6 +24,8 @@ public class CatcherCrateManager : MonoBehaviour {
 
     private void Start() {
 
+        ShuffleColors();
+
         foreach(CatcherSlot slot in slots) {
             SpawnAtSlot(slot);
         }
@@ -29,8 +33,14 @@ public class CatcherCrateManager : MonoBehaviour {
 
     private void SpawnAtSlot(CatcherSlot slot) {
 
-        int randomIndex = Random.Range(0, possibleColors.Count);
-        slot.SpawnCrate(possibleColors[randomIndex]);
+        if(colorsList.Count == 0) {
+            ShuffleColors();
+        }
+
+        CardColor selectedColor = colorsList[0];
+        colorsList.RemoveAt(0);
+
+        slot.SpawnCrate(selectedColor);
     }
 
     public void RequestRespawn(CatcherSlot slot) {
@@ -41,5 +51,20 @@ public class CatcherCrateManager : MonoBehaviour {
 
         yield return new WaitForSeconds(respawnDelay);
         SpawnAtSlot(slot);
+    }
+
+    private void ShuffleColors() {
+
+        colorsList.Clear();
+        colorsList.AddRange(possibleColors);
+
+        for(int i = 0; i < colorsList.Count; i++) {
+
+            int randomIndex = Random.Range(i, colorsList.Count);
+
+            CardColor temp = colorsList[i];
+            colorsList[i] = colorsList[randomIndex];
+            colorsList[randomIndex] = temp;
+        }
     }
 }

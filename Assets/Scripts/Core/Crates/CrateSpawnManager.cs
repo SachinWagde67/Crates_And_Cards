@@ -16,6 +16,8 @@ public class CrateSpawnManager : MonoBehaviour {
     [SerializeField] private List<Transform> spawnLocations = new List<Transform>();
     [SerializeField] private float respawnDelay = 1.0f;
 
+    private List<CrateConfig> spawnCratesList = new List<CrateConfig>();
+
     private void OnEnable() {
         GameEvents.OnGeneratorEmpty += HandleGeneratorEmpty;
     }
@@ -25,6 +27,8 @@ public class CrateSpawnManager : MonoBehaviour {
     }
 
     private void Start() {
+
+        ShuffleCrates();
 
         foreach(Transform location in spawnLocations) {
             SpawnRandomCrate(location);
@@ -48,9 +52,12 @@ public class CrateSpawnManager : MonoBehaviour {
 
     private void SpawnRandomCrate(Transform parent) {
 
-        int randomIndex = Random.Range(0, crateConfigs.Count);
+        if(spawnCratesList.Count == 0) {
+            ShuffleCrates();
+        }
 
-        CrateConfig config = crateConfigs[randomIndex];
+        CrateConfig config = spawnCratesList[0];
+        spawnCratesList.RemoveAt(0);
 
         GeneratorCrate crate = PoolManager.Instance.GetGenerator();
 
@@ -59,5 +66,20 @@ public class CrateSpawnManager : MonoBehaviour {
         crate.transform.localRotation = Quaternion.identity;
 
         crate.InitializeCrate(config);
+    }
+
+    private void ShuffleCrates() {
+
+        spawnCratesList.Clear();
+        spawnCratesList.AddRange(crateConfigs);
+
+        for(int i = 0; i < spawnCratesList.Count; i++) {
+
+            int randomIndex = Random.Range(i, spawnCratesList.Count);
+
+            CrateConfig temp = spawnCratesList[i];
+            spawnCratesList[i] = spawnCratesList[randomIndex];
+            spawnCratesList[randomIndex] = temp;
+        }
     }
 }
